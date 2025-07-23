@@ -24,13 +24,17 @@ class User extends Model
     'password' => ['required_without:id', 'min:8'],
   ];
 
-  function articles()
-  {
-    return $this->hasMany(Article::class);
-  }
 
   function comments()
   {
     return $this->hasMany(Comment::class);
   }
+}
+
+public function medications() {
+  return $this->hasMany(Medication::class);
+}
+
+public function files() {
+  return $this->hasMany(File::class);
 }
