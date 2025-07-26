@@ -29,12 +29,14 @@ class User extends Model
   {
     return $this->hasMany(Comment::class);
   }
-}
 
-public function medications() {
-  return $this->hasMany(Medication::class);
-}
+  function medications()
+  {
+    return $this->hasMany(Medication::class);
+  }
 
-public function files() {
-  return $this->hasMany(File::class);
+  public function files()
+  {
+    return $this->hasMany(File::class);
+  }
 }

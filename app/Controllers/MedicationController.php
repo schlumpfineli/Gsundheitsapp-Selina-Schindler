@@ -1,7 +1,3 @@
-Hier ist der angepasste Code für eine Medikamentenverwaltung nach dem gleichen Muster wie Ihr `CommentController`. Ich habe OOP und CRUD Prinzipien beibehalten:
-
-### MedicationController.php
-```php
 <?php
 
 namespace App\Controllers;
