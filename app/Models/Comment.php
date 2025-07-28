@@ -1,37 +1,21 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Models;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Bootstrap\Column;
+use Bootstrap\Model;
 
-class UserController
+class Comment extends Model
 {
-  function index(Request $request)
-  {
-    return Auth::user();
-  }
+  #[Column] public int $id;
+  #[Column] public string $text;
+  #[Column] public int $article_id;
+  #[Column] public int $user_id;
+  #[Column] public string $created_at;
+  #[Column] public string $updated_at;
 
-  function create(Request $request)
-  {
-    $payload = $request->validate(User::$rules);
-    $user = User::create($payload);
-    return $user;
-  }
-
-  function update(Request $request)
-  {
-    $user = Auth::user();
-    $payload = $request->validate(User::$rules);
-    $user->update($payload);
-    return $user;
-  }
-
-  function destroy(Request $request)
-  {
-    $user = Auth::user();
-    $user->delete();
-    return $user;
-  }
+  static $rules = [
+    'text' => ['required_without:id', 'min:1', 'max: 200'],
+    'article_id' => ['required_without:id', 'exists:articles,id'],
+  ];
 }

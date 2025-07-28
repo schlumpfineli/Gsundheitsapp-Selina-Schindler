@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Controllers;
 
 use Bootstrap\Column;
 use Bootstrap\Model;
@@ -18,8 +18,8 @@ class Medication extends Model
 
   static $rules = [
     'name' => ['required_without:id', 'min:2', 'max:100'],
-    'dosage' => ['sometimes', 'max:50'],
-    'frequency' => ['sometimes', 'max:100'],
+    'dosage' => ['sometimes', 'max:5000'],
+    'frequency' => ['sometimes', 'max:4'],
     'notes' => ['sometimes', 'max:500'],
   ];
 }
