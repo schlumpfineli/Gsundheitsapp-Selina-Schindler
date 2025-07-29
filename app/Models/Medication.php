@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Models;
 
 use Bootstrap\Column;
 use Bootstrap\Model;

@@ -6,6 +6,7 @@ use App\Controllers\AuthController;
 use App\Controllers\UserController;
 use App\Controllers\CommentsController;
 use App\Controllers\MedicationController;
+use App\Controllers\FileController;
 
 // guest endpoints
 Route::post('/auth/login', [AuthController::class, 'login']);

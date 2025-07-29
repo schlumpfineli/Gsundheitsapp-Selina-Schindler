@@ -6,6 +6,8 @@ use Bootstrap\Column;
 use Bootstrap\Model;
 use Laravel\Sanctum\HasApiTokens;
 
+
+
 class User extends Model
 {
   use HasApiTokens;
