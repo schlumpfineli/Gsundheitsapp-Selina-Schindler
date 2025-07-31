@@ -5,7 +5,7 @@ namespace Database\Seeders;
 // faker: https://fakerphp.github.io/formatters/text-and-paragraphs/
 
 use App\Models\Medication;
-use App\Models\Comment;
+//use App\Models\Comment;
 use App\Models\File;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -37,16 +37,20 @@ class DatabaseSeeder extends Seeder
     for ($i = 0; $i < 20; $i++) {
       Medication::create([
         'name' => fake()->randomElement(['Ibuprofen', 'Paracetamol', 'Aspirin', 'Metformin', 'Insulin']),
-        'dosage' => fake()->randomElement(['200mg', '500mg', '1g', '50IU']),
-        'administration_form' => fake()->randomElement(['tablet', 'capsule', 'injection', 'syrup', 'patch']),
+        'dosage' => fake()->numberBetween(50, 1000) . fake()->randomElement(['mg', 'IU']),
         'time_of_day' => json_encode(
           fake()->randomElements(
-            ['morning', 'noon', 'evening', 'night'],
-            rand(1, 3) // 1-3 Einnahmezeiten
+            ['morning', 'midday', 'evening', 'night'],
+            rand(1, 4)
           )
         ),
-        'notes' => fake()->optional()->sentence(),
-        'user_id' => User::inRandomOrder()->first()->id, // Zufälliger User
+        'notes' => fake()->optional(0.7)->randomElement([
+          'Nüchtern einnehmen',
+          'Mit viel Wasser',
+          'Nicht mit Alkohol kombinieren',
+          null
+        ]),
+        'user_id' => User::inRandomOrder()->first()->id,
       ]);
     }
     // files

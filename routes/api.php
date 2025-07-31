@@ -11,6 +11,11 @@ use App\Controllers\FileController;
 // guest endpoints
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/user', [UserController::class, 'create']);
+Route::get('/medications', [MedicationController::class, 'index']);
+Route::get('/medications/search', [MedicationController::class, 'search']);
+Route::get('/comments', [CommentsController::class, 'index']);
+Route::get('/files', [FileController::class, 'index']);
+
 
 // user endpoints
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -27,12 +32,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::delete('/comments', [CommentsController::class, 'destroy']);
 
 
-  Route::get('/medications', [MedicationController::class, 'index']);
   Route::post('/medications', [MedicationController::class, 'create']);
   Route::patch('/medications', [MedicationController::class, 'update']);
   Route::delete('/medications', [MedicationController::class, 'destroy']);
 
-  Route::get('/files', [FileController::class, 'index']);
+
   Route::post('/files', [FileController::class, 'create']);
   Route::patch('/files', [FileController::class, 'update']);
   Route::delete('/files', [FileController::class, 'destroy']);

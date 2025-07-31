@@ -10,7 +10,7 @@ class File extends Model
 {
   #[Column] public int $id;
   #[Column] public string $name;
-  #[Column] public string $path;
+  //#[Column] public string $path;
   #[Column] public string $mime_type;
   #[Column] public int $size;
   #[Column] public string $comment;

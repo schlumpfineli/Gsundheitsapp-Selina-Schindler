@@ -10,12 +10,11 @@ return new class extends Migration {
     Schema::create('medications', function (Blueprint $table) {
       $table->id();
       $table->string('name');
-      $table->string('dosage')->nullable();
-      $table->string('administration_form');
-      $table->string('frequency')->nullable();
+      $table->string('dosage');
+      $table->json('time_of_day')->nullable(); // Für mehrere Einnahmezeiten
       $table->text('notes')->nullable();
-      $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-      $table->timestamps(); // created_at und updated_at
+      $table->foreignId('user_id')->constrained();
+      $table->timestamps();
     });
   }
 
