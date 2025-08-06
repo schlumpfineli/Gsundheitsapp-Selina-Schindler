@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-// faker: https://fakerphp.github.io/formatters/text-and-paragraphs/
-
 use App\Models\Medication;
-//use App\Models\Comment;
 use App\Models\Upload;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -13,24 +10,40 @@ use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
-  function run()
+  /**
+   * Get the mime type based on file extension.
+   */
+  private function getMimeType($extension)
+  {
+    $mimeTypes = [
+      'pdf' => 'application/pdf',
+      'jpg' => 'image/jpeg',
+      'jpeg' => 'image/jpeg',
+      'png' => 'image/png',
+      'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+    return $mimeTypes[$extension] ?? 'application/octet-stream';
+  }
+
+  public function run()
   {
     // users
     ////////////////////////////////////////////////////////////////////////////
-    $users = [
-      User::create([
-        'email' => 'alpha@mailinator.com',
-        'password' => 'password',
-      ]),
-      User::create([
-        'email' => 'bravo@mailinator.com',
-        'password' => 'password',
-      ]),
-      User::create([
-        'email' => 'charlie@mailinator.com',
-        'password' => 'password',
-      ])
-    ];
+    User::create([
+      'email' => 'alpha@mailinator.com',
+      'password' => 'password',
+      'is_admin' => true,
+    ]);
+
+    User::create([
+      'email' => 'bravo@mailinator.com',
+      'password' => 'password',
+    ]);
+
+    User::create([
+      'email' => 'charlie@mailinator.com',
+      'password' => 'password',
+    ]);
 
     // medications
     ////////////////////////////////////////////////////////////////////////////
@@ -56,64 +69,25 @@ class DatabaseSeeder extends Seeder
 
     // uploads
     ////////////////////////////////////////////////////////////////////////////
-    $categories = ['doctor', 'neurology', 'psychology', 'therapy', 'alternative', 'other'];
-    $fileTypes = [
-      'pdf' => ['Blutwerte.pdf', 'Rezept.pdf', 'Bericht.pdf'],
-      'jpg' => ['Röntgen.jpg', 'Ultraschall.jpg'],
-      'docx' => ['Therapieplan.docx']
-    ];
+    for ($i = 0; $i < 20; $i++) {
+      $user = User::inRandomOrder()->first();
+      $fileType = fake()->randomElement(['pdf', 'jpg', 'docx']);
+      $fileName = fake()->word() . '.' . $fileType;
+      $path = "uploads/{$user->id}/{$fileName}";
 
-    foreach ($users as $user) {
-      foreach ($categories as $category) {
-        foreach ($fileTypes as $type => $files) {
-          foreach ($files as $file) {
-            $path = "uploads/{$user->id}/{$file}";
+      Storage::disk('public')->put($path, 'Seed content: ' . $fileName);
 
-            Storage::disk('public')->put($path, 'Seed content: ' . $file);
-
-            Upload::create([
-              'user_id' => $user->id,
-              'file_path' => $path,
-              'original_name' => $file,
-              'display_name' => pathinfo($file, PATHINFO_FILENAME),
-              'category' => $category,
-              'comment' => $this->generateComment($category),
-              'mime_type' => $this->getMimeType($file),
-              'size' => rand(100000, 5000000),
-              'is_public' => rand(0, 1)
-            ]);
-          }
-        }
-      }
+      Upload::create([
+        'user_id' => $user->id,
+        'file_path' => $path,
+        'original_name' => $fileName,
+        'display_name' => fake()->words(2, true),
+        'category' => fake()->randomElement(['doctor', 'neurology', 'psychology', 'therapy', 'alternative', 'other']),
+        'comment' => fake()->optional(0.7)->sentence(),
+        'mime_type' => $this->getMimeType($fileType),
+        'size' => fake()->numberBetween(100000, 5000000),
+        'is_public' => fake()->boolean(30)
+      ]);
     }
   }
-
-  private function generateComment(string $category): ?string
-  {
-    return match ($category) {
-      'doctor' => 'Befund vom ' . now()->format('d.m.Y'),
-      'therapy' => 'Sitzung #' . rand(1, 10),
-      default => fake()->optional()->sentence()
-    };
-  }
-
-  private function getMimeType(string $filename): string
-  {
-    return match (pathinfo($filename, PATHINFO_EXTENSION)) {
-      'pdf' => 'application/pdf',
-      'jpg' => 'image/jpeg',
-      'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      default => 'application/octet-stream'
-    };
-  }
 }
-
-// comments
-////////////////////////////////////////////////////////////////////////////
-//for ($i = 0; $i < 20; $i++) {
-//Comment::create([
-// 'text' => fake()->sentence(),
-//'article_id' => random_int(1, 10),
-//'user_id' => random_int(1, 3),
-//]);
-// }
