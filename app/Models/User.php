@@ -27,18 +27,19 @@ class User extends Model
   ];
 
 
-  function comments()
-  {
-    return $this->hasMany(Comment::class);
-  }
+  //function comments()
+  //{
+  // return $this->hasMany(Comment::class);
+  //}
 
   function medications()
   {
     return $this->hasMany(Medication::class);
   }
 
-  public function files()
+
+  function uploads()
   {
-    return $this->hasMany(File::class);
+    return $this->hasMany(Upload::class);
   }
 }

@@ -6,9 +6,10 @@ namespace Database\Seeders;
 
 use App\Models\Medication;
 //use App\Models\Comment;
-use App\Models\File;
+use App\Models\Upload;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -16,24 +17,23 @@ class DatabaseSeeder extends Seeder
   {
     // users
     ////////////////////////////////////////////////////////////////////////////
-    User::create([
-      'email' => 'alpha@mailinator.com',
-      'password' => 'password',
-    ]);
-
-    User::create([
-      'email' => 'bravo@mailinator.com',
-      'password' => 'password',
-    ]);
-
-    User::create([
-      'email' => 'charlie@mailinator.com',
-      'password' => 'password',
-    ]);
+    $users = [
+      User::create([
+        'email' => 'alpha@mailinator.com',
+        'password' => 'password',
+      ]),
+      User::create([
+        'email' => 'bravo@mailinator.com',
+        'password' => 'password',
+      ]),
+      User::create([
+        'email' => 'charlie@mailinator.com',
+        'password' => 'password',
+      ])
+    ];
 
     // medications
     ////////////////////////////////////////////////////////////////////////////
-
     for ($i = 0; $i < 20; $i++) {
       Medication::create([
         'name' => fake()->randomElement(['Ibuprofen', 'Paracetamol', 'Aspirin', 'Metformin', 'Insulin']),
@@ -53,24 +53,67 @@ class DatabaseSeeder extends Seeder
         'user_id' => User::inRandomOrder()->first()->id,
       ]);
     }
-    // files
-    ////////////////////////////////////////////////////////////////////////////
-    for ($i = 0; $i < 20; $i++) {
-      File::create([
-        'name' => fake()->sentence(),
-        'comment' => fake()->sentence(),
-        'user_id' => random_int(1, 3),
-      ]);
-    }
 
-    // comments
+    // uploads
     ////////////////////////////////////////////////////////////////////////////
-    //for ($i = 0; $i < 20; $i++) {
-    //Comment::create([
-    // 'text' => fake()->sentence(),
-    //'article_id' => random_int(1, 10),
-    //'user_id' => random_int(1, 3),
-    //]);
-    // }
+    $categories = ['doctor', 'neurology', 'psychology', 'therapy', 'alternative', 'other'];
+    $fileTypes = [
+      'pdf' => ['Blutwerte.pdf', 'Rezept.pdf', 'Bericht.pdf'],
+      'jpg' => ['Röntgen.jpg', 'Ultraschall.jpg'],
+      'docx' => ['Therapieplan.docx']
+    ];
+
+    foreach ($users as $user) {
+      foreach ($categories as $category) {
+        foreach ($fileTypes as $type => $files) {
+          foreach ($files as $file) {
+            $path = "uploads/{$user->id}/{$file}";
+
+            Storage::disk('public')->put($path, 'Seed content: ' . $file);
+
+            Upload::create([
+              'user_id' => $user->id,
+              'file_path' => $path,
+              'original_name' => $file,
+              'display_name' => pathinfo($file, PATHINFO_FILENAME),
+              'category' => $category,
+              'comment' => $this->generateComment($category),
+              'mime_type' => $this->getMimeType($file),
+              'size' => rand(100000, 5000000),
+              'is_public' => rand(0, 1)
+            ]);
+          }
+        }
+      }
+    }
+  }
+
+  private function generateComment(string $category): ?string
+  {
+    return match ($category) {
+      'doctor' => 'Befund vom ' . now()->format('d.m.Y'),
+      'therapy' => 'Sitzung #' . rand(1, 10),
+      default => fake()->optional()->sentence()
+    };
+  }
+
+  private function getMimeType(string $filename): string
+  {
+    return match (pathinfo($filename, PATHINFO_EXTENSION)) {
+      'pdf' => 'application/pdf',
+      'jpg' => 'image/jpeg',
+      'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      default => 'application/octet-stream'
+    };
   }
 }
+
+// comments
+////////////////////////////////////////////////////////////////////////////
+//for ($i = 0; $i < 20; $i++) {
+//Comment::create([
+// 'text' => fake()->sentence(),
+//'article_id' => random_int(1, 10),
+//'user_id' => random_int(1, 3),
+//]);
+// }

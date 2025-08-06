@@ -4,17 +4,15 @@
 use Illuminate\Support\Facades\Route;
 use App\Controllers\AuthController;
 use App\Controllers\UserController;
-use App\Controllers\CommentsController;
 use App\Controllers\MedicationController;
-use App\Controllers\FileController;
+use App\Controllers\UploadsController;
 
 // guest endpoints
 Route::post('/auth/login', [AuthController::class, 'login']);
 Route::post('/user', [UserController::class, 'create']);
 Route::get('/medications', [MedicationController::class, 'index']);
 Route::get('/medications/search', [MedicationController::class, 'search']);
-Route::get('/comments', [CommentsController::class, 'index']);
-Route::get('/files', [FileController::class, 'index']);
+Route::get('/uploads/{id}', [UploadsController::class, 'show']);
 
 
 // user endpoints
@@ -25,19 +23,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
   Route::patch('/user', [UserController::class, 'update']);
   Route::delete('/user', [UserController::class, 'destroy']);
 
-
-  Route::get('/comments', [CommentsController::class, 'index']);
-  Route::post('/comments', [CommentsController::class, 'create']);
-  Route::patch('/comments', [CommentsController::class, 'update']);
-  Route::delete('/comments', [CommentsController::class, 'destroy']);
-
-
   Route::post('/medications', [MedicationController::class, 'create']);
   Route::patch('/medications', [MedicationController::class, 'update']);
   Route::delete('/medications', [MedicationController::class, 'destroy']);
 
 
-  Route::post('/files', [FileController::class, 'create']);
-  Route::patch('/files', [FileController::class, 'update']);
-  Route::delete('/files', [FileController::class, 'destroy']);
+  Route::get('/uploads', [UploadsController::class, 'index']);
+  Route::post('/uploads', [UploadsController::class, 'create']);
+  Route::patch('/uploads', [UploadsController::class, 'update']);
+  Route::delete('/uploads', [UploadsController::class, 'destroy']);
 });

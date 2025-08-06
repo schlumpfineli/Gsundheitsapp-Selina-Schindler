@@ -12,7 +12,7 @@ class MedicationController
   {
     $id = $request->input('id');
     $userId = $request->input('user_id');
-    $title = $request->input('title');
+    $name = $request->input('name');
     $orderBy = $request->input('order_by', 'created_at');
     $orderDir = $request->input('order_dir', 'asc');
     $limit = $request->input('limit', 1000);
@@ -22,7 +22,7 @@ class MedicationController
     $query = Medication::query();
     if ($id) return $query->where('id', $id)->firstOrFail();
     if ($userId) $query->where('user_id', $userId);
-    if ($title) $query->where('title', 'like', "%$title%");
+    if ($name) $query->where('name', 'like', "%$name%");
 
     $query->orderBy($orderBy, $orderDir);
     $query->limit($limit);
@@ -35,14 +35,14 @@ class MedicationController
 
   function search(Request $request)
   {
-    $title = $request->input('title');
-    return Medication::select('id', 'title')
+    $name = $request->input('name');
+    return Medication::select('id', 'name')
       ->get()
       ->map(fn($a) => [
         'id' => $a->id,
-        'title' => $a->title,
-        'distance' => levenshtein($title, $a->title),
-        'similarity' => similar_text($title, $a->title),
+        'name' => $a->name,
+        'distance' => levenshtein($name, $a->name),
+        'similarity' => similar_text($name, $a->name),
       ])
       ->sortBy('distance')
       ->values();
